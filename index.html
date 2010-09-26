@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script type="text/javascript" src="jquery-1.4.2.js"></script>
+ <script src="http://code.jquery.com/jquery-latest.js"></script>
+ <script src="catalog.js"></script>
  <script type="text/javascript">
 
     function appendCategory(id,name,parentId) {
@@ -12,30 +13,10 @@
     }
 
     function loadCategoryTree(data) {
-      $(data).find("category").each(function(){
-         var name = $(this).children("name:first").text();
-         var id = $(this).attr("id");
-         var parentId = $(this).children("parent:first").text();
-         appendCategory(id, name, parentId);
-      });
-    }
-
-    function loadThumbnails(data) {
-
-    }
-
-    function loadItemId(data) {
-       var categoryId = $(data).find("collection:first").attr("category-id");
-       var ids = "";
-       $(data).find("item-id").each(function() {
-               ids = ids + "," + $(this).text();
-             });
-
-       $.get("http://shopping.mvm.com/cat3d_ctx/action/getItems?roc=shopping_vs&poc=F&itemIds=" + ids, loadThumbnails, "xml");
-    }
-
-    function getItemIds(categoryId) {
-      $.get("http://shopping.mvm.com/cat3d_ctx/action/getCollection?categoryId=" + categoryId + "&poc=F&roc=shopping_vs", loadItemId, "xml")
+       var categories = parseCategories(data);
+       for(var i = 0; i < categories.length; i++) {
+          appendCategory(categories[i].id, categories[i].name, categories[i].parentId);
+       }
     }
 
     $(document).ready(function(){

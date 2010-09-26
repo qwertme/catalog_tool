@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <script src="http://code.jquery.com/jquery-latest.js"></script>
+      <link rel="stylesheet" href="http://github.com/jquery/qunit/raw/master/qunit/qunit.css" type="text/css" media="screen" />
+      <script type="text/javascript" src="http://github.com/jquery/qunit/raw/master/qunit/qunit.js"></script>
+      <script type="text/javascript" src="catalog.js"></script>
+      <script>
+         $(document).ready(function(){
+            function assertCategory(parentId, id, name, category) {
+               equals(id, category.id, "category id");
+               equals(name, category.name, "name");
+               equals(parentId, category.parentId, "parent id");
+            }
+
+            test("parse category", function() {
+               var category = new Category("<category id=\"2\">\
+                                                <<name>a_category</name>\
+                                                <parent>1</parent>\
+                                           </category>");
+               assertCategory("1", "2", "a_category", category);
+            });
+
+            test("parse categories", function() {
+               var categories_xml = "<root>\
+                                       <category id=\"1\">\
+                                          <name>a_category</name>\
+                                          <sub-categories>\
+                                             <category id=\"2\">\
+                                                <<name>b_category</name>\
+                                                <parent>1</parent>\
+                                             </category>\
+                                             <category id=\"3\">\
+                                                <<name>c_category</name>\
+                                                <parent>1</parent>\
+                                                <sub-categories>\
+                                                   <category id=\"4\">\
+                                                      <<name>d_category</name>\
+                                                      <parent>3</parent>\
+                                                   </category>\
+                                                   <category id=\"5\">\
+                                                      <<name>e_category</name>\
+                                                      <parent>3</parent>\
+                                                   </category>\
+                                                </sub-categories>\
+                                             </category>\
+                                          </sub-categories>\
+                                       </category>\
+                                     </root>";
+               var categories = parseCategories(categories_xml);
+               equals(5, categories.length, "category count");
+               assertCategory("", "1", "a_category", categories[0]);
+               assertCategory("1", "2", "b_category", categories[1]);
+               assertCategory("1", "3", "c_category", categories[2]);
+               assertCategory("3", "4", "d_category", categories[3]);
+               assertCategory("3", "5", "e_category", categories[4]);
+            });
+
+            test("get item ids from collection", function() {
+               var collection_xml = "<collection category-id=\"1\">\
+                                       <items>\
+                                         <item-id>1</item-id>\
+                                         <item-id>2</item-id>\
+                                         <item-id>3</item-id>\
+                                       </items>\
+                                    </collection>";
+
+               var itemIds = parseItemIds(collection_xml);
+
+               equals(3, itemIds.length);
+               for(var i=0; i < 3; i++) {
+                  equals(i + 1, itemIds[i]);
+               }
+            });
+         });
+      </script>
+
+   </head>
+   <body>
+      <h1 id="qunit-header">QUnit example</h1>
+      <h2 id="qunit-banner"></h2>
+      <h2 id="qunit-userAgent"></h2>
+      <ol id="qunit-tests"></ol>
+      <div id="qunit-fixture">test markup, will be hidden</div>
+   </body>
+</html>
+
