@@ -72,6 +72,25 @@
                   equals(i + 1, itemIds[i]);
                }
             });
+
+            test("parse item", function() {
+               var item_xml = "<item id=\"1\" type=\"quick\">\
+                                 <product-info>\
+                                   <name>a_name</name>\
+                                   <thumbnails>\
+                                     <thumbnail label=\"large\">http://large/thumbnail</thumbnail>\
+                                     <thumbnail label=\"small\">http://small/thumbnail</thumbnail>\
+                                   </thumbnails>\
+                                </product-info>\
+                              </item>";
+
+               var item = new Item(item_xml);
+               equals("1", item.id, "item id");
+               equals("quick", item.type, "item type");
+               equals("a_name", item.name, "item name");
+               equals("http://large/thumbnail", item.largeThumbnail, "large thumbnail");
+               equals("http://small/thumbnail", item.smallThumbnail, "small thumbnail");
+            });
          });
       </script>
 
